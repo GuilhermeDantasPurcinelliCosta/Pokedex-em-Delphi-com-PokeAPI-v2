@@ -45,14 +45,14 @@
 				<MainSource>MainSource</MainSource>
 			</DelphiCompile>
 			<DCCReference Include="..\Form\PokemonTypes.pas"/>
-			<DCCReference Include="..\Super Object\superobject\superdate.pas"/>
-			<DCCReference Include="..\Super Object\superobject\superobject.pas"/>
-			<DCCReference Include="..\Super Object\superobject\supertimezone.pas"/>
-			<DCCReference Include="..\Super Object\superobject\supertypes.pas"/>
-			<DCCReference Include="..\Super Object\superobject\superxmlparser.pas"/>
 			<DCCReference Include="..\Form\U_Pokedex.pas">
 				<Form>F_Pokedex</Form>
 			</DCCReference>
+			<DCCReference Include="..\Super Object\superdate.pas"/>
+			<DCCReference Include="..\Super Object\superobject.pas"/>
+			<DCCReference Include="..\Super Object\supertimezone.pas"/>
+			<DCCReference Include="..\Super Object\supertypes.pas"/>
+			<DCCReference Include="..\Super Object\superxmlparser.pas"/>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>
 				<CfgParent>Base</CfgParent>
