@@ -67,8 +67,8 @@
         AlignWithMargins = True
         Left = 3
         Top = 25
-        Width = 155
-        Height = 53
+        Width = 138
+        Height = 28
         Margins.Top = 25
         Align = alClient
         Alignment = taCenter
@@ -80,8 +80,6 @@
         Font.Style = [fsBold]
         ParentFont = False
         OnMouseDown = lbpesquisaMouseDown
-        ExplicitWidth = 138
-        ExplicitHeight = 28
       end
     end
     object pnbotaopesquisa: TPanel
@@ -176,7 +174,7 @@
           Left = 20
           Top = 3
           Width = 162
-          Height = 98
+          Height = 106
           Margins.Left = 20
           Align = alLeft
           Caption = 'POKEMON'
@@ -186,7 +184,6 @@
           Font.Name = 'Pokemon Solid'
           Font.Style = []
           ParentFont = False
-          ExplicitHeight = 106
         end
       end
       object pnedtsinformacao: TPanel
@@ -264,7 +261,7 @@
           AlignWithMargins = True
           Left = 35
           Top = 75
-          Width = 87
+          Width = 90
           Height = 33
           Margins.Left = 35
           Margins.Top = 75
@@ -276,13 +273,12 @@
           Font.Name = 'Tahoma'
           Font.Style = [fsBold]
           ParentFont = False
-          ExplicitWidth = 90
         end
         object lbpoder: TLabel
           AlignWithMargins = True
           Left = 35
           Top = 224
-          Width = 87
+          Width = 90
           Height = 33
           Margins.Left = 35
           Margins.Top = 37
@@ -294,13 +290,12 @@
           Font.Name = 'Tahoma'
           Font.Style = [fsBold]
           ParentFont = False
-          ExplicitWidth = 90
         end
         object lbtipo: TLabel
           AlignWithMargins = True
           Left = 55
           Top = 151
-          Width = 67
+          Width = 69
           Height = 33
           Margins.Left = 55
           Margins.Top = 40
@@ -312,7 +307,6 @@
           Font.Name = 'Tahoma'
           Font.Style = [fsBold]
           ParentFont = False
-          ExplicitWidth = 69
         end
       end
     end
@@ -349,8 +343,8 @@
           object lbnomemoudura: TLabel
             Left = 0
             Top = 0
-            Width = 238
-            Height = 33
+            Width = 108
+            Height = 28
             Align = alClient
             Alignment = taCenter
             Caption = 'Pokemon'
@@ -360,8 +354,6 @@
             Font.Name = 'Tahoma'
             Font.Style = [fsBold]
             ParentFont = False
-            ExplicitWidth = 108
-            ExplicitHeight = 28
           end
         end
         object pnpatededentrodamoudura: TPanel

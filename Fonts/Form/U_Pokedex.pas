@@ -36,9 +36,9 @@ type
       pnimagens: TPanel;
       pnpatededentrodamoudura: TPanel;
       imgimagedpokemon: TImage;
-    pnbotoesprocimoantes: TPanel;
-    btnprocimo: TSpeedButton;
-    btnanterior: TSpeedButton;
+      pnbotoesprocimoantes: TPanel;
+      btnprocimo: TSpeedButton;
+      btnanterior: TSpeedButton;
       procedure btnpesquisaClick(Sender: TObject);
       procedure FormShow(Sender: TObject);
       procedure btnsairClick(Sender: TObject);
@@ -50,12 +50,12 @@ type
         Shift: TShiftState; X, Y: Integer);
       procedure lbpesquisaMouseDown(Sender: TObject; Button: TMouseButton;
         Shift: TShiftState; X, Y: Integer);
-    procedure btnanteriorClick(Sender: TObject);
-    procedure btnprocimoClick(Sender: TObject);
-    procedure edtpesquisaKeyPress(Sender: TObject; var Key: Char);
+      procedure btnanteriorClick(Sender: TObject);
+      procedure btnprocimoClick(Sender: TObject);
+      procedure edtpesquisaKeyPress(Sender: TObject; var Key: Char);
    private
       FHTTP: THTTPSend;
-      FCodigo : string;
+      FCodigo: string;
       FStatusCode: Integer;
       Fnome: string;
       Ftipo: string;
@@ -102,9 +102,9 @@ end;
 
 procedure TF_Pokedex.edtpesquisaKeyPress(Sender: TObject; var Key: Char);
 begin
-   if key = #13 then
+   if Key = #13 then
    begin
-      key := #0;
+      Key := #0;
       btnpesquisa.Click;
    end;
 end;
@@ -191,11 +191,10 @@ begin
 
    pokemonCodigo := s.I['id'];
 
-
    pokemonImg := s.O['sprites'].s['front_default'];
 
    // Acessar o nome do Pokémon
-   pokemonName := s.S['name']; // "bulbasaur"
+   pokemonName := s.s['name']; // "bulbasaur"
 
    // Acessar o tipo do Pokémon (primeiro tipo da lista de 'types')
    pokemonType := s.A['types'].O[0].O['type'].s['name']; // "grass"
@@ -271,21 +270,22 @@ end;
 
 procedure TF_Pokedex.btnanteriorClick(Sender: TObject);
 var
-strnum : string;
-num : integer;
-caminhoimg: TPngImage;
+   strnum: string;
+   num: Integer;
+   caminhoimg: TPngImage;
 begin
 
-//   if Trim(edtpesquisa.Text) = '' then
-//      exit;
-   if FCodigo = ''  then
-   exit;
+   // if Trim(edtpesquisa.Text) = '' then
+   // exit;
+   if FCodigo = '' then
+      exit;
 
    strnum := FCodigo;
    num := StrToInt(strnum);
    num := num - 1;
    case num of
-      0 : num := 1;
+      0:
+         num := 1;
    end;
 
    edtpesquisa.Text := IntToStr(num);
@@ -312,7 +312,8 @@ begin
    case FStatusCode of
       404:
          begin
-            ImgPath := ExtractFilePath(ParamStr(0)) + 'img\limpoquemeessepokemon (1).png';
+            ImgPath := ExtractFilePath(ParamStr(0)) +
+              'img\limpoquemeessepokemon (1).png';
             pnmoudura.Color := $009D9D9D;
             edtnome.Text := '?';
             edttipo.Text := '?';
@@ -320,8 +321,7 @@ begin
             lbnomemoudura.Caption := '?';
             caminhoimg := TPngImage.Create;
             try
-               caminhoimg.LoadFromFile
-                 (ImgPath);
+               caminhoimg.LoadFromFile(ImgPath);
                imgimagedpokemon.Picture.Assign(caminhoimg);
                imgimagedpokemon.Stretch := True;
             finally
@@ -354,7 +354,6 @@ begin
    edtpesquisa.Text := Fnome;
    edtpesquisa.SetFocus; // Foca no TEdit
    edtpesquisa.SelStart := Length(edtpesquisa.Text);
-
 
 end;
 
