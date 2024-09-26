@@ -2,13 +2,13 @@ program P_Pokedex;
 
 uses
   Forms,
-  U_Pokedex in '..\Form\U_Pokedex.pas' {F_Pokedex},
   PokemonTypes in '..\Form\PokemonTypes.pas',
-  superdate in '..\Componente\superobject\superdate.pas',
-  superobject in '..\Componente\superobject\superobject.pas',
-  supertimezone in '..\Componente\superobject\supertimezone.pas',
-  supertypes in '..\Componente\superobject\supertypes.pas',
-  superxmlparser in '..\Componente\superobject\superxmlparser.pas';
+  superdate in '..\Super Object\superobject\superdate.pas',
+  superobject in '..\Super Object\superobject\superobject.pas',
+  supertimezone in '..\Super Object\superobject\supertimezone.pas',
+  supertypes in '..\Super Object\superobject\supertypes.pas',
+  superxmlparser in '..\Super Object\superobject\superxmlparser.pas',
+  U_Pokedex in '..\Form\U_Pokedex.pas' {F_Pokedex};
 
 {$R *.res}
 
