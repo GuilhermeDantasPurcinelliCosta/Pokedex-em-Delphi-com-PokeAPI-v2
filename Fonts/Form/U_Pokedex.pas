@@ -5,7 +5,8 @@ interface
 uses
    Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
    Dialogs, ExtCtrls, StdCtrls, Buttons, httpsend, ssl_openssl, MMSystem,
-   ComCtrls, Jsons, superobject, pngimage, PokemonTypes;
+   ComCtrls, Jsons, superobject, pngimage, PokemonTypes, Grids, DBGrids, DB,
+  DBClient, frxClass, frxDBSet, frxExportPDF, DM_Poke, ShellAPI;
 
 type
    TF_Pokedex = class(TForm)
@@ -17,28 +18,41 @@ type
       btnpesquisa: TButton;
       pneditpesquisa: TPanel;
       edtpesquisa: TEdit;
-      pnfundo: TPanel;
-      edtnome: TEdit;
-      edttipo: TEdit;
-      edtpoder: TEdit;
-      lbnome: TLabel;
-      lbtipo: TLabel;
-      lbpoder: TLabel;
-      lbpoke: TLabel;
-      pnmoudura: TPanel;
-      pnnomemoudura: TPanel;
-      lbnomemoudura: TLabel;
       btnsair: TSpeedButton;
-      pninformaçoes: TPanel;
-      pnrodapeinformacoes: TPanel;
-      pnedtsinformacao: TPanel;
-      pnlbinformacao: TPanel;
-      pnimagens: TPanel;
-      pnpatededentrodamoudura: TPanel;
-      imgimagedpokemon: TImage;
-      pnbotoesprocimoantes: TPanel;
-      btnprocimo: TSpeedButton;
-      btnanterior: TSpeedButton;
+    btnsalvar: TSpeedButton;
+    btnImprimir: TSpeedButton;
+    trb_Pokemon: TClientDataSet;
+    ds_pokemon: TDataSource;
+    trb_PokemonpokemonNome: TStringField;
+    trb_PokemonpokemonTipo: TStringField;
+    trb_PokemonPokemonPoder: TIntegerField;
+    trb_PokemonPokemonID: TIntegerField;
+    btnLimpar: TSpeedButton;
+    pnfundo: TPanel;
+    pninformaçoes: TPanel;
+    pnrodapeinformacoes: TPanel;
+    lbpoke: TLabel;
+    pnedtsinformacao: TPanel;
+    edtnome: TEdit;
+    edtpoder: TEdit;
+    edttipo: TEdit;
+    pnlbinformacao: TPanel;
+    lbnome: TLabel;
+    lbpoder: TLabel;
+    lbtipo: TLabel;
+    pnimagens: TPanel;
+    pnmoudura: TPanel;
+    pnnomemoudura: TPanel;
+    lbnomemoudura: TLabel;
+    pnpatededentrodamoudura: TPanel;
+    imgimagedpokemon: TImage;
+    pnbotoesprocimoantes: TPanel;
+    btnprocimo: TSpeedButton;
+    btnanterior: TSpeedButton;
+    dbgsalvarpokemon: TDBGrid;
+    lbCodogo: TLabel;
+    Timer: TTimer;
+    lbsalvo: TLabel;
       procedure btnpesquisaClick(Sender: TObject);
       procedure FormShow(Sender: TObject);
       procedure btnsairClick(Sender: TObject);
@@ -53,6 +67,11 @@ type
       procedure btnanteriorClick(Sender: TObject);
       procedure btnprocimoClick(Sender: TObject);
       procedure edtpesquisaKeyPress(Sender: TObject; var Key: Char);
+    procedure FormCreate(Sender: TObject);
+    procedure btnsalvarClick(Sender: TObject);
+    procedure btnImprimirClick(Sender: TObject);
+    procedure btnLimparClick(Sender: TObject);
+    procedure TimerTimer(Sender: TObject);
    private
       FHTTP: THTTPSend;
       FCodigo: string;
@@ -66,6 +85,8 @@ type
       procedure ConfiguraTHTTPSend;
       procedure SetStatusCode(const Value: Integer);
       procedure Pokemonimagem(const imgUrl: string; img: TImage);
+      procedure Validar_Salvar_Pokemon;
+      procedure Salvar_Pokemon;
    public
       GJson: string;
       property nome: String read Fnome;
@@ -82,6 +103,8 @@ var
 
 implementation
 
+uses U_Filtro_Relatorio;
+
 const
    URL = 'https://pokeapi.co/api/v2/pokemon/%s';
 
@@ -91,6 +114,57 @@ const
 procedure TF_Pokedex.btnsairClick(Sender: TObject);
 begin
    Application.Terminate;
+end;
+
+procedure TF_Pokedex.btnsalvarClick(Sender: TObject);
+var
+   CaminhoArquivo: string;
+begin
+   Validar_Salvar_Pokemon;
+//   Salvar_Pokemon;
+
+   CaminhoArquivo := ExtractFilePath(ParamStr(0)) + 'imgPK\Pokemon_' + FCodigo + '.png';
+   if not imgimagedpokemon.Picture.Graphic.Empty then
+      begin
+         imgimagedpokemon.Picture.SaveToFile(CaminhoArquivo);
+      end
+   else
+      raise Exception.Create('Nao tem imagem');
+
+      DM_Pokemon.Q_Pokemon_Cadastro.SQL.Clear;
+      DM_Pokemon.Q_Pokemon_Cadastro.SQL.Add('SELECT *FROM pokemon p');
+      DM_Pokemon.Q_Pokemon_Cadastro.SQL.Add('WHERE p.PS_ID_Pokemon = :PS_ID_Pokemon');
+      DM_Pokemon.Q_Pokemon_Cadastro.ParamByName('PS_ID_Pokemon').AsInteger := StrToInt(FCodigo);
+      DM_Pokemon.Q_Pokemon_Cadastro.Open;
+
+      if DM_Pokemon.Q_Pokemon_Cadastro.RecordCount <= 0 then
+         begin
+            DM_Pokemon.Q_Pokemon_Cadastro.Insert;
+            DM_Pokemon.Q_Pokemon_CadastroPS_ID_Pokemon.AsInteger := StrToInt(FCodigo);
+            DM_Pokemon.Q_Pokemon_CadastroPS_Nome_Pokemon.AsString := Fnome;
+            DM_Pokemon.Q_Pokemon_CadastroPS_Tipo_Pokemon.AsString := Ftipo;
+            DM_Pokemon.Q_Pokemon_CadastroPS_Poder_Pokemon.AsInteger := StrToInt(FPoder);
+            DM_Pokemon.Q_Pokemon_CadastroPS_Imagem_Pokemon.AsString := 'imgPK\Pokemon_' + FCodigo + '.png';
+            //DM_Pokemon.Q_PokemonPS_ID_Grop.AsInteger := 1000;
+            DM_Pokemon.Q_Pokemon_Cadastro.Post;
+            DM_Pokemon.Q_Pokemon.Close;
+            DM_Pokemon.Q_Pokemon.Open;
+
+              // Define o primeiro texto no Labe
+            lbsalvo.Caption := 'Pokemon salvo na sua pokedex';
+
+
+  // Define o intervalo do Timer para 2 segundos (2000 milissegundos)
+            Timer.Interval := 1000;
+
+  // Ativa o Timer para trocar o texto após 2 segundos
+            Timer.Enabled := True;
+
+         end
+      else  //DM_Pokemon.Q_Pokemon.RecordCount > 0 then
+         raise Exception.Create('Pokemon ja foi salvo');
+
+
 end;
 
 procedure TF_Pokedex.ConfiguraTHTTPSend;
@@ -109,8 +183,18 @@ begin
    end;
 end;
 
+procedure TF_Pokedex.FormCreate(Sender: TObject);
+begin
+//  trb_Pokemon.Close;
+//  trb_Pokemon.CreateDataSet;
+//  trb_Pokemon.Open;
+
+end;
+
 procedure TF_Pokedex.FormShow(Sender: TObject);
 begin
+   DM_Pokemon.Q_Pokemon.Close;
+   DM_Pokemon.Q_Pokemon.Open;
    edtpesquisa.SetFocus;
    // caminhoimg := TPngImage.Create;
    // try
@@ -261,11 +345,51 @@ begin
 
 end;
 
+procedure TF_Pokedex.Salvar_Pokemon;
+begin
+//   trb_Pokemon.Append;
+//   trb_PokemonpokemonNome.AsString := edtnome.Text;
+//   trb_PokemonpokemonTipo.AsString := edttipo.Text;
+//   trb_PokemonPokemonPoder.AsInteger := StrToInt(edtpoder.Text);
+//   trb_PokemonPokemonID.AsInteger := StrToInt(FCodigo);
+//   trb_Pokemon.Post;
+end;
+
 procedure TF_Pokedex.SetStatusCode(const Value: Integer);
 var
    caminhoimg: TPngImage;
 begin
    FStatusCode := Value;
+end;
+
+procedure TF_Pokedex.TimerTimer(Sender: TObject);
+begin
+  lbsalvo.Caption := '';
+
+  // Desativa o Timer para evitar que ele continue repetindo
+  Timer.Enabled := False;
+end;
+
+procedure TF_Pokedex.Validar_Salvar_Pokemon;
+var
+   codigo: Integer;
+begin
+   case FStatusCode of
+      404:
+         raise Exception.Create('Este Pokemon não existe!!!');
+   end;
+
+      if edtnome.Text = '' then
+         raise Exception.Create('Nao a pokemon a salvar');
+
+      codigo := StrToInt(FCodigo);
+
+            if DM_Pokemon.Q_PokemonPS_ID_Pokemon.AsInteger = codigo then
+               begin
+                  raise Exception.Create('Ja foi salvo');
+               end;
+
+
 end;
 
 procedure TF_Pokedex.btnanteriorClick(Sender: TObject);
@@ -293,6 +417,66 @@ begin
    edtpesquisa.Text := Fnome;
    edtpesquisa.SetFocus; // Foca no TEdit
    edtpesquisa.SelStart := Length(edtpesquisa.Text);
+end;
+
+procedure TF_Pokedex.btnImprimirClick(Sender: TObject);
+var
+   SaveID: Integer;
+begin
+//   if trb_Pokemon.IsEmpty then
+//   begin
+//      raise Exception.Create('nao itens para Imprimir');
+//   end;
+
+//   DM_Pokemon.Q_Save.Open;
+//   DM_Pokemon.Q_Save.Insert;
+//   DM_Pokemon.Q_SaveData_Salvamento.AsDateTime := Date;
+//   DM_Pokemon.Q_SaveHora_Salvamento.AsDateTime := Time;
+//   DM_Pokemon.Q_Save.Post;
+//   SaveID := DM_Pokemon.Q_SaveSaveID.AsInteger;
+//   trb_Pokemon.First;
+
+//   while not trb_Pokemon.Eof do
+//   begin
+//
+//      DM_Pokemon.Q_Pokemon.Open;
+//      DM_Pokemon.Q_Pokemon.Insert;
+//      DM_Pokemon.Q_PokemonPS_ID_Pokemon.AsInteger := trb_PokemonPokemonID.AsInteger;
+//      DM_Pokemon.Q_PokemonPS_Nome_Pokemon.AsString := trb_PokemonpokemonNome.AsString;          l
+//      DM_Pokemon.Q_PokemonPS_Tipo_Pokemon.AsString := trb_PokemonpokemonTipo.AsString;
+//      DM_Pokemon.Q_PokemonPS_Poder_Pokemon.AsInteger := trb_PokemonPokemonPoder.AsInteger;
+//      DM_Pokemon.Q_PokemonPS_ID_Grop.AsInteger := SaveID;
+//      DM_Pokemon.Q_Pokemon.Post;
+//
+//      trb_Pokemon.Next;
+//   end;
+
+   F_Filtro := TF_Filtro.Create(self);
+      try
+         F_Filtro.ShowModal;
+      finally
+         FreeAndNil(F_Filtro);
+      end;
+
+
+end;
+
+procedure TF_Pokedex.btnLimparClick(Sender: TObject);
+begin
+//   if trb_Pokemon.Active then
+//      begin
+//         trb_Pokemon.EmptyDataSet;
+//         edtpesquisa.Text := '';
+//         pnmoudura.Color := $009D9D9D;
+//         edtnome.Text := '';
+//         edttipo.Text := '';
+//         edtpoder.Text := '';
+//         FCodigo := '0';
+//         lbnomemoudura.Caption := 'Pokemon';
+//         imgimagedpokemon.Picture.Graphic := nil;
+//         edtpesquisa.SetFocus;
+//      end;
+
 end;
 
 procedure TF_Pokedex.btnpesquisaClick(Sender: TObject);
@@ -343,10 +527,11 @@ begin
    Pokemonimagem(FimgUrl, imgimagedpokemon);
    // mmojson.Text := FimgUrl;
 
-   edtnome.Text := Fnome;
-   edttipo.Text := Ftipo;
+   edtnome.Text := UpperCase(Fnome);
+   edttipo.Text := UpperCase(Ftipo);
    edtpoder.Text := FPoder;
-   lbnomemoudura.Caption := FNomeMoudura;
+   lbnomemoudura.Caption := UpperCase(Fnome);
+   lbCodogo.Caption := FCodigo;
    // Cormoudura;
    pokemonType := edttipo.Text;
    PokemonInfo := GetPokemonTypeByName(edttipo.Text);
@@ -366,16 +551,19 @@ begin
 
    // if Trim(edtpesquisa.Text) = '' then
    // exit;
-   if FCodigo = '' then
-      exit;
 
+   if FCodigo = '' then
+     FCodigo := '0';
    strnum := FCodigo;
    num := StrToInt(strnum);
    num := num + 1;
    case num of
       0:
-         exit;
+         num := 1;
    end;
+
+
+
 
    edtpesquisa.Text := IntToStr(num);
    btnpesquisa.Click;
