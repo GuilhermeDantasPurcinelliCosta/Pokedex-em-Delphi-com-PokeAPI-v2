@@ -27,7 +27,6 @@
     Color = clBlack
     ParentBackground = False
     TabOrder = 0
-    ExplicitTop = 474
     object btnsair: TSpeedButton
       Left = 1148
       Top = 0
@@ -212,9 +211,6 @@
     Color = 5395026
     ParentBackground = False
     TabOrder = 2
-    ExplicitLeft = -8
-    ExplicitTop = 84
-    ExplicitHeight = 599
     object pninformaçoes: TPanel
       AlignWithMargins = True
       Left = 3
@@ -225,7 +221,6 @@
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
-      ExplicitHeight = 380
       object pnrodapeinformacoes: TPanel
         Left = 0
         Top = 273
@@ -234,7 +229,6 @@
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitTop = 276
         object lbpoke: TLabel
           AlignWithMargins = True
           Left = 20
@@ -250,8 +244,7 @@
           Font.Name = 'Pokemon Solid'
           Font.Style = []
           ParentFont = False
-          ExplicitLeft = 55
-          ExplicitTop = -61
+          ExplicitHeight = 106
         end
       end
       object pnedtsinformacao: TPanel
@@ -263,7 +256,6 @@
         Align = alRight
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitHeight = 560
         object edtnome: TEdit
           AlignWithMargins = True
           Left = 3
@@ -327,7 +319,6 @@
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 2
-        ExplicitHeight = 276
         object lbnome: TLabel
           AlignWithMargins = True
           Left = 35
@@ -467,7 +458,6 @@
             Height = 213
             Align = alClient
             ExplicitTop = -1
-            ExplicitWidth = 215
           end
           object lbCodogo: TLabel
             Left = 189
@@ -565,12 +555,14 @@
           Expanded = False
           FieldName = 'PS_Tipo_Pokemon'
           Title.Caption = 'Tipo.Pokemon'
+          Width = 64
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'PS_Poder_Pokemon'
           Title.Caption = 'Poder.Pokemon'
+          Width = 64
           Visible = True
         end>
     end
